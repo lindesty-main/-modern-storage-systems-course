@@ -1,0 +1,52 @@
+{
+  "geometry": {
+    "page_bytes": 4096,
+    "pages_per_block": 4,
+    "logical_pages": 20,
+    "physical_blocks": 8
+  },
+  "workloads": [
+    {
+      "name": "hotset-4-pages",
+      "kind": "hotset",
+      "writes": 160,
+      "hot_pages": 4,
+      "seed": 17
+    },
+    {
+      "name": "uniform-all-pages",
+      "kind": "uniform",
+      "writes": 160,
+      "seed": 17
+    },
+    {
+      "name": "sequential-wraparound",
+      "kind": "sequential",
+      "writes": 160,
+      "seed": 17
+    }
+  ],
+  "allocation_policies": [
+    "fifo",
+    "least_worn"
+  ],
+  "queue": {
+    "requests": 200,
+    "interarrival_us": 100,
+    "request_bytes": 4096,
+    "systems": {
+      "local": {
+        "lanes": 1,
+        "fixed_us": 80,
+        "us_per_mib": 250,
+        "network_rtt_us": 0
+      },
+      "remote": {
+        "lanes": 1,
+        "fixed_us": 120,
+        "us_per_mib": 300,
+        "network_rtt_us": 800
+      }
+    }
+  }
+}

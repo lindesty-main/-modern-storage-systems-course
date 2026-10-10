@@ -1,0 +1,4 @@
+__pycache__/
+*.py[cod]
+file-report.json
+fio-report.json

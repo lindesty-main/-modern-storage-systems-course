@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "service": "示例：内部图片缩略图服务（虚构需求）",
+  "data": {
+    "initial_gib": 500,
+    "growth_gib_per_day": 8,
+    "retention_days": 180,
+    "sensitivity": "内部业务图片；访问控制和保留策略需由业务方确认"
+  },
+  "workload": {
+    "read_percent": 90,
+    "write_percent": 10,
+    "request_bytes": 65536,
+    "access_pattern": "mixed",
+    "working_set_gib": 120,
+    "peak_ops_per_second": 2500,
+    "concurrency": 64,
+    "burst_seconds": 90
+  },
+  "slo": {
+    "p99_latency_ms": 40,
+    "throughput_ops_per_second": 2500,
+    "availability_percent": 99.9,
+    "measurement_window_seconds": 300
+  },
+  "semantics": {
+    "consistency": "同一对象写入成功后，后续读取应返回该版本；跨对象事务不在需求内",
+    "durability": "写成功响应代表的持久化边界尚需与服务实现核实，不把进程返回等同于断电持久",
+    "rpo_seconds": 300,
+    "rto_seconds": 3600
+  },
+  "failure_model": {
+    "in_scope": [
+      "单个服务进程异常退出",
+      "单块本地数据盘不可读",
+      "短暂网络中断（若方案含远端服务）"
+    ],
+    "out_of_scope": [
+      "整个站点及其备份同时毁损",
+      "恶意管理员或供应链攻击"
+    ],
+    "assumptions": [
+      "故障检测和恢复时间需要通过演练测量",
+      "副本不自动等于独立备份或独立故障域"
+    ]
+  },
+  "constraints": {
+    "deployment_boundary": "优先本地机房；远端服务需评估网络和数据驻留",
+    "budget_and_cost": "先估算容量、请求和运维成本，再做选型",
+    "security_and_compliance": [
+      "最小权限",
+      "传输和静态数据保护要求待安全团队确认"
+    ],
+    "operational_owner": "两名值班工程师；需明确备份恢复责任"
+  },
+  "candidate_options": [
+    {
+      "name": "单机文件系统",
+      "fit": "实现路径短，适合作为本地原型和低复杂度基线",
+      "risk": "单机故障域；需单独设计备份、恢复及并发语义"
+    },
+    {
+      "name": "本地对象服务",
+      "fit": "对象接口和容量扩展模型可能符合图片访问模式",
+      "risk": "接口兼容不自动意味着语义相同；需验证故障域、恢复和运维负担"
+    }
+  ],
+  "open_questions": [
+    "容量增长是否包含副本、版本和元数据开销？",
+    "p99 的统计窗口、错误请求处理和客户端重试如何定义？",
+    "RPO/RTO 应覆盖单盘、单机还是站点级故障？"
+  ]
+}
